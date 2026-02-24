@@ -88,9 +88,8 @@ Scored key papers for a query within a time window. Papers are ranked by a compo
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
 | `query` | Yes | — | PubMed search query |
-| `start_year` | No | current - 3 | First year |
+| `start_year` | No | current - 5 | First year |
 | `end_year` | No | current year | Last year |
-| `max_results` | No | 10 | Max papers returned |
 
 ```bash
 awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/keypapers?query=base+editing&start_year=2023&end_year=2025'
@@ -105,7 +104,7 @@ Full research digest combining scored key papers, MeSH term landscape, and frequ
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
 | `query` | Yes | — | PubMed search query |
-| `start_year` | No | current - 3 | First year |
+| `start_year` | No | current - 5 | First year |
 | `end_year` | No | current year | Last year |
 
 ```bash
@@ -143,7 +142,7 @@ Scan a category for topics with accelerating publication rates. Use `category` f
 | `topic` | Yes* | — | Free-text topic (when `source=openalex`) |
 | `source` | No | pubmed | `pubmed` or `openalex` |
 | `window_years` | No | 3 | Years to evaluate growth |
-| `min_growth_rate` | No | 1.0 | Minimum CAGR threshold (1.0 = 100%) |
+| `min_growth_rate` | No | 0.3 | Minimum CAGR threshold (0.3 = 30%) |
 | `limit` | No | 10 | Max results |
 
 *One of `category` or `topic` required depending on source.
@@ -162,11 +161,11 @@ Discover which sub-topics within a research field are growing fastest. Uses Open
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
 | `query` | Yes | — | Research field to decompose |
-| `years` | No | 3 | Window size in years |
-| `limit` | No | 10 | Max results |
+| `window` | No | 3 | Window size in years (2–5) |
+| `limit` | No | 10 | Max results (1–25) |
 
 ```bash
-awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/trending-subtopics?query=ulcerative+colitis&years=3'
+awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/trending-subtopics?query=ulcerative+colitis&window=3'
 ```
 
 Returns sub-topics with `topic_id`, `topic_name`, per-year `counts`, `cagr`, `trend_direction`, `latest_year_count`, and `growth_score`.
@@ -180,8 +179,10 @@ Discover interesting research signals. Two modes:
 
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
-| `topics` | No | — | Comma-separated research topics to scan |
-| `limit` | No | 10 | Max results |
+| `topics` | No | — | Comma-separated research topics to scan (max 4) |
+| `limit` | No | 5 | Max results (1–20) |
+| `min_z_score` | No | 2.0 | Minimum z-score for anomaly mode (without `topics`) |
+| `days` | No | 7 | Lookback days for anomaly mode (1–30, without `topics`) |
 
 ```bash
 awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/explore?topics=neurodegeneration,epigenetics&limit=5'
@@ -196,13 +197,17 @@ Author analytics profile powered by OpenAlex. Returns citation metrics, institut
 
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
-| `name` | Yes | — | Author name to look up |
+| `name` | Yes* | — | Author name to look up |
+| `orcid` | Yes* | — | ORCID identifier (alternative to name) |
+
+*One of `name` or `orcid` required.
 
 ```bash
 awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/author?name=David+Liu'
+awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/author?orcid=0000-0001-8277-943X'
 ```
 
-Returns `name`, `works_count`, `cited_by_count`, `h_index`, `current_institution` (name, country), and publication history.
+Returns `name`, `orcid`, `works_count`, `cited_by_count`, `h_index`, `i10_index`, `current_institution` (name, country), `top_topics`, `counts_by_year` (works, cited_by per year).
 
 ## Categories
 
@@ -255,7 +260,7 @@ awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/pulse?query=GLP-1+agonist+neurod
 > "What are the key papers and sub-topics for NF2 schwannoma treatment?"
 ```bash
 awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/keypapers?query=NF2+schwannoma+treatment&start_year=2022&end_year=2025'
-awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/trending-subtopics?query=neurofibromatosis+type+2&years=3'
+awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/trending-subtopics?query=neurofibromatosis+type+2&window=3'
 awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/pulse?query=NF2+schwannoma+treatment'
 ```
 
