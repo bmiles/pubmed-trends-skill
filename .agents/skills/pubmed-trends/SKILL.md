@@ -209,6 +209,23 @@ awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/author?orcid=0000-0001-8277-943X
 
 Returns `name`, `orcid`, `works_count`, `cited_by_count`, `h_index`, `i10_index`, `current_institution` (name, country), `top_topics`, `counts_by_year` (works, cited_by per year).
 
+### POST /api/v1/feature-request — $0.01
+
+Submit a feature request or data-source suggestion to the maintainers. The only `POST` endpoint. Send a JSON body. The x402 payment attributes the submission — the verified payer wallet is recorded as the submitter identity, so no separate account or auth is needed.
+
+| Field | Required | Default | Description |
+|-----------|----------|---------|-------------|
+| `title` | Yes | — | Short summary (1–120 chars) |
+| `description` | Yes | — | Full request (1–2000 chars) |
+| `category` | No | — | One of `endpoint`, `data`, `pricing`, `bug`, `other` |
+| `contact` | No | — | Optional contact string (≤200 chars) if you want a reply |
+
+```bash
+awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/feature-request' --method POST --data '{"title":"Add clinical-trial phase breakdown","description":"Return publication counts split by clinical trial phase (I-IV) for a query.","category":"data"}'
+```
+
+Returns `ok`, `id`, and a `message`. Validation failures return `400` before settlement, so a rejected submission is never charged.
+
 ## Categories
 
 Used by `/hottest-weekly` and `/emerging` (PubMed mode):
