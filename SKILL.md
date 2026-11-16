@@ -83,7 +83,7 @@ Returns `current` and `year_ago` counts for 7d/30d/90d windows, plus `change` (f
 
 ### GET /api/v1/keypapers — $0.03
 
-Scored key papers for a query within a time window. Papers are ranked by a composite score based on journal prestige, publication type, MeSH relevance, and citation impact (via OpenAlex).
+Scored key papers for a query within a time window. Papers are ranked by a composite score based on journal prestige, publication type, search relevance, and citation impact (via OpenAlex).
 
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
@@ -97,9 +97,11 @@ awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/keypapers?query=base+editing&sta
 
 Returns scored papers with `pmid`, `title`, `journal`, `pub_year`, `pub_type`, `score`, `score_breakdown` (top_journal, review_or_trial, mesh_major_topic, multi_strategy_hit, relevance_rank, citation_impact), `cited_by_count`, `fwci` (field-weighted citation impact), `open_access` status, and `authors_enriched` (name, institution, country).
 
+NCBI summaries do not supply MeSH annotations, so fresh results retain `score_breakdown.mesh_major_topic: 0`. This indicates unavailable annotations, not absence of PubMed MeSH indexing.
+
 ### GET /api/v1/digest — $0.08
 
-Full research digest combining scored key papers, MeSH term landscape, and frequent authors. The most comprehensive single-call endpoint.
+Full research digest combining scored key papers and frequent authors. The most comprehensive single-call endpoint.
 
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
@@ -111,7 +113,7 @@ Full research digest combining scored key papers, MeSH term landscape, and frequ
 awal x402 pay 'https://pubmed.sekgen.xyz/api/v1/digest?query=NF2+schwannomatosis+treatment&start_year=2022&end_year=2025'
 ```
 
-Returns everything from `/keypapers` plus `mesh_terms` (array of MeSH descriptors across the result set) and `authors` (recurring authors with appearance counts).
+Returns everything from `/keypapers` plus `mesh_terms` (retained for compatibility; fresh summary-based results return an empty array) and `authors` (recurring authors with appearance counts).
 
 ### GET /api/v1/hottest-weekly — $0.05
 
